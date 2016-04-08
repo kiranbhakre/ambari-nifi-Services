@@ -3,7 +3,7 @@ Ambari service for easily installing and managing NiFi on HDP cluster and viewin
 
 Features:
 
-- By default, downloads the current GA version - HDF 1.1.2.0 package (nifi 0.5.1) - but also gives option to build the latest Nifi from source instead
+- By default, downloads the current GA version - HDF 1.2.0.0 package (nifi 0.6) - but also gives option to build the latest Nifi from source instead
 - Exposes nifi.properties, bootstrap.conf, logback.xml in Ambari UI (so you can configure port, memory, log dir etc)
 - Sets up initial flow.xml.gz that sets up Ambari reporting task to send Ambari metrics
 - Includes metrics widgets from [here](https://cwiki.apache.org/confluence/display/NIFI/Ambari+Metrics)
@@ -14,10 +14,6 @@ Limitations:
 - It does not support Ambari/HDP upgrade process and will cause upgrade problems if not removed prior to upgrade
 - Not tested on secured clusters
 
-Authors: 
-  - [Ali Bajwa](https://github.com/abajwa-hw): Nifi Install/start/stop via Ambari
-  - [Bryan Bende](https://github.com/bbende): Ambari metrics integration
-  
 #### Setup
 
 #### Option 1: Deploy Nifi on existing cluster
@@ -60,7 +56,7 @@ sudo service ambari-server restart
 On bottom left -> Actions -> Add service -> check NiFi server -> Next -> Next -> Change any config you like (e.g. install dir, port, setup_prebuilt or values in nifi.properties) -> Next -> Deploy
 
   - By default:
-    - Port is set to 9090
+    - Port is set to 9092
     - Max JVM memory size is 512mb
     - Run schedule for Nifi's Ambari reporting task is 1 min
   
