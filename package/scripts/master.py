@@ -25,10 +25,11 @@ class Master(Script):
     
     #official HDF 1.1.1 package (nifi 0.4.1)
     #snapshot_package='http://public-repo-1.hortonworks.com/HDF/1.1.1.0/nifi-1.1.1.0-12-bin.zip'           
-    #official HDF 1.1.2 package (nifi 0.5.1)
-    #snapshot_package='http://public-repo-1.hortonworks.com/HDF/1.1.2.0/nifi-0.5.1.1.1.2.0-32-bin.zip'
-
-    #official HDF 1.2.0 package (nifi 0.6.1)
+    
+    #official HDF 1.1.2 package     
+    snapshot_package='http://public-repo-1.hortonworks.com/HDF/1.1.2.0/nifi-0.5.1.1.1.2.0-32-bin.zip'
+    
+    #official HDF 1.2 package (nifi 0.6.0)
     snapshot_package='http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/HDF-1.2.0.0-91.zip'
 
     #e.g. /var/lib/ambari-agent/cache/stacks/HDP/2.3/services/NIFI/package
@@ -54,10 +55,15 @@ class Master(Script):
          
     Execute('touch ' +  params.nifi_log_file, user=params.nifi_user)    
     Execute('rm -rf ' + params.nifi_dir, ignore_failures=True)
-    Execute('mkdir -p '+params.nifi_dir)
-    Execute('chown -R ' + params.nifi_user + ':' + params.nifi_group + ' ' + params.nifi_dir)
-    Execute('wget -nv http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/hdf.repo -O /etc/yum.repos.d/hdf.repo')
-    
+    #Execute('mkdir -p '+params.nifi_dir)
+    #Execute('chown -R ' + params.nifi_user + ':' + params.nifi_group + ' ' + params.nifi_dir)
+
+    Directory([params.nifi_dir],
+            owner=params.nifi_user,
+            group=params.nifi_group,
+            recursive=True
+    )  
+        
     #User selected option to use prebuilt nifi package 
     if params.setup_prebuilt:
 
@@ -73,10 +79,10 @@ class Master(Script):
       #Fetch and unzip snapshot build, if no cached nifi tar package exists on Ambari server node
       if not os.path.exists(params.temp_file):
         Execute('wget '+snapshot_package+' -O '+params.temp_file+' -a '  + params.nifi_log_file, user=params.nifi_user)
-        Execute('unzip '+params.temp_file+' -d ' + params.nifi_install_dir + ' >> ' + params.nifi_log_file, user=params.nifi_user)
+      Execute('unzip '+params.temp_file+' -d ' + params.nifi_install_dir + ' >> ' + params.nifi_log_file, user=params.nifi_user)
+      Execute('mv '+params.nifi_dir+'/*/* ' + params.nifi_dir, user=params.nifi_user)
+          
 
-        #Execute('mv '+params.nifi_dir+'/*/* ' + params.nifi_dir, user=params.nifi_user)
-		
       #params.conf_dir = os.path.join(*[params.nifi_install_dir,params.nifi_dirname,'conf'])
       #params.bin_dir = os.path.join(*[params.nifi_install_dir,params.nifi_dirname,'bin'])
       
@@ -99,11 +105,9 @@ class Master(Script):
        
       #if params.setup_view:
         #Install maven repo if needed
-		
       self.install_mvn_repo()      
       # Install packages listed in metainfo.xml
       self.install_packages(env)    
-
     
       # Execute('yum -y install java-1.7.0-openjdk-devel >> ' + params.nifi_log_file)
       
@@ -153,7 +157,7 @@ class Master(Script):
       Execute('echo "First time setup so generating flow.xml.gz" >> ' + params.nifi_log_file)    
       flow_content=InlineTemplate(params.nifi_flow_content)
       File(format("{params.conf_dir}/flow.xml"), content=flow_content, owner=params.nifi_user, group=params.nifi_group)
-      Execute(format("cd {params.conf_dir}; mv flow.xml.gz flow_$(date +%d-%m-%Y).xml.gz ;"), user=params.nifi_user, ignore_failures=True)
+      Execute(format("cd {params.conf_dir}; mv flow.xml.gz flow_$(date +%d-%m-%Y).xml.gz ;"),user=params.nifi_user,ignore_failures=True)
       Execute(format("cd {params.conf_dir}; gzip flow.xml;"), user=params.nifi_user)
 
     #write out boostrap.conf
@@ -196,7 +200,6 @@ class Master(Script):
     distribution = platform.linux_distribution()[0].lower()
     if distribution in ['centos', 'redhat'] and not os.path.exists('/etc/yum.repos.d/epel-apache-maven.repo'):
       Execute('curl -o /etc/yum.repos.d/epel-apache-maven.repo https://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo')
-      Execute('wget -nv http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/hdf.repo -O /etc/yum.repos.d/hdf.repo')
 
   def set_conf_bin(self, env):
     import params
