@@ -74,8 +74,7 @@ class Master(Script):
       if not os.path.exists(params.temp_file):
         Execute('wget '+snapshot_package+' -O '+params.temp_file+' -a '  + params.nifi_log_file, user=params.nifi_user)
         Execute('unzip '+params.temp_file+' -d ' + params.nifi_install_dir + ' >> ' + params.nifi_log_file, user=params.nifi_user)
-		Execute('wget -nv http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/hdf.repo -O /etc/yum.repos.d/hdf.repo')
-		
+
         #Execute('mv '+params.nifi_dir+'/*/* ' + params.nifi_dir, user=params.nifi_user)
 		
       #params.conf_dir = os.path.join(*[params.nifi_install_dir,params.nifi_dirname,'conf'])
@@ -104,7 +103,7 @@ class Master(Script):
       self.install_mvn_repo()      
       # Install packages listed in metainfo.xml
       self.install_packages(env)    
-	  Execute('wget -nv http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/hdf.repo -O /etc/yum.repos.d/hdf.repo')
+
     
       # Execute('yum -y install java-1.7.0-openjdk-devel >> ' + params.nifi_log_file)
       
