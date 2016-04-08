@@ -25,8 +25,11 @@ class Master(Script):
     
     #official HDF 1.1.1 package (nifi 0.4.1)
     #snapshot_package='http://public-repo-1.hortonworks.com/HDF/1.1.1.0/nifi-1.1.1.0-12-bin.zip'           
-    
-    snapshot_package='http://public-repo-1.hortonworks.com/HDF/1.1.2.0/nifi-0.5.1.1.1.2.0-32-bin.zip'
+    #official HDF 1.1.2 package (nifi 0.5.1)
+    #snapshot_package='http://public-repo-1.hortonworks.com/HDF/1.1.2.0/nifi-0.5.1.1.1.2.0-32-bin.zip'
+
+    #official HDF 1.2.0 package (nifi 0.6.1)
+    snapshot_package='http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/HDF-1.2.0.0-91.zip'
 
     #e.g. /var/lib/ambari-agent/cache/stacks/HDP/2.3/services/NIFI/package
     service_packagedir = os.path.realpath(__file__).split('/scripts')[0] 
@@ -53,6 +56,7 @@ class Master(Script):
     Execute('rm -rf ' + params.nifi_dir, ignore_failures=True)
     Execute('mkdir -p '+params.nifi_dir)
     Execute('chown -R ' + params.nifi_user + ':' + params.nifi_group + ' ' + params.nifi_dir)
+    Execute('wget -nv http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/hdf.repo -O /etc/yum.repos.d/hdf.repo')
     
     #User selected option to use prebuilt nifi package 
     if params.setup_prebuilt:
@@ -69,10 +73,11 @@ class Master(Script):
       #Fetch and unzip snapshot build, if no cached nifi tar package exists on Ambari server node
       if not os.path.exists(params.temp_file):
         Execute('wget '+snapshot_package+' -O '+params.temp_file+' -a '  + params.nifi_log_file, user=params.nifi_user)
-      Execute('unzip '+params.temp_file+' -d ' + params.nifi_install_dir + ' >> ' + params.nifi_log_file, user=params.nifi_user)
-      #Execute('mv '+params.nifi_dir+'/*/* ' + params.nifi_dir, user=params.nifi_user)
-          
-
+        Execute('unzip '+params.temp_file+' -d ' + params.nifi_install_dir + ' >> ' + params.nifi_log_file, user=params.nifi_user)
+		Execute('wget -nv http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/hdf.repo -O /etc/yum.repos.d/hdf.repo')
+		
+        #Execute('mv '+params.nifi_dir+'/*/* ' + params.nifi_dir, user=params.nifi_user)
+		
       #params.conf_dir = os.path.join(*[params.nifi_install_dir,params.nifi_dirname,'conf'])
       #params.bin_dir = os.path.join(*[params.nifi_install_dir,params.nifi_dirname,'bin'])
       
@@ -95,9 +100,11 @@ class Master(Script):
        
       #if params.setup_view:
         #Install maven repo if needed
+		
       self.install_mvn_repo()      
       # Install packages listed in metainfo.xml
       self.install_packages(env)    
+	  Execute('wget -nv http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/hdf.repo -O /etc/yum.repos.d/hdf.repo')
     
       # Execute('yum -y install java-1.7.0-openjdk-devel >> ' + params.nifi_log_file)
       
@@ -190,6 +197,7 @@ class Master(Script):
     distribution = platform.linux_distribution()[0].lower()
     if distribution in ['centos', 'redhat'] and not os.path.exists('/etc/yum.repos.d/epel-apache-maven.repo'):
       Execute('curl -o /etc/yum.repos.d/epel-apache-maven.repo https://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo')
+      Execute('wget -nv http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/hdf.repo -O /etc/yum.repos.d/hdf.repo')
 
   def set_conf_bin(self, env):
     import params
