@@ -105,7 +105,7 @@ curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/am
 export install_ambari_server=true
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/ambari-bootstrap.sh | sudo -E sh
 yum install -y git
-sudo git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/2.4/services/NIFI
+sudo git clone https://github.com/kiranbhakre/ambari-nifi-Services.git   /var/lib/ambari-server/resources/stacks/HDP/2.4/services/NIFI
 ```
 
 - Restart Ambari
@@ -176,7 +176,7 @@ http://sandbox.hortonworks.com:9090/nifi
 - Install Nifi via Ambari service on sandbox by running below and running 'Add service' wizard
 ```
 VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-sudo git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/NIFI   
+sudo git clone https://github.com/kiranbhakre/ambari-nifi-Services.git   /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/NIFI   
 #sandbox
 service ambari restart
 #non sandbox
@@ -214,7 +214,7 @@ tail -f /var/log/hadoop/hdfs/hadoop-hdfs-namenode-sandbox.hortonworks.com.log | 
 - Install Nifi via Ambari service on sandbox by running below and running 'Add service' wizard
 ```
 VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-sudo git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/NIFI   
+sudo git clone https://github.com/kiranbhakre/ambari-nifi-Services.git   /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/NIFI   
 #sandbox
 service ambari restart
 #non sandbox
