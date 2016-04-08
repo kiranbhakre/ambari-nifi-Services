@@ -29,7 +29,7 @@ class Master(Script):
     #snapshot_package='http://public-repo-1.hortonworks.com/HDF/1.1.2.0/nifi-0.5.1.1.1.2.0-32-bin.zip'
 
     #official HDF 1.2.0 package (nifi 0.6.1)
-    snapshot_package='http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/HDF-1.2.0.0-91.tar.gz'
+    snapshot_package='http://public-repo-1.hortonworks.com/HDF/centos6/1.x/updates/1.2.0.0/HDF-1.2.0.0-91.zip'
 
     #e.g. /var/lib/ambari-agent/cache/stacks/HDP/2.3/services/NIFI/package
     service_packagedir = os.path.realpath(__file__).split('/scripts')[0] 
@@ -72,7 +72,7 @@ class Master(Script):
       #Fetch and unzip snapshot build, if no cached nifi tar package exists on Ambari server node
       if not os.path.exists(params.temp_file):
         Execute('wget '+snapshot_package+' -O '+params.temp_file+' -a '  + params.nifi_log_file, user=params.nifi_user)
-      Execute('tar -xvzf '+params.temp_file+' -d ' + params.nifi_install_dir + ' >> ' + params.nifi_log_file, user=params.nifi_user)
+      Execute('unzip '+params.temp_file+' -d ' + params.nifi_install_dir + ' >> ' + params.nifi_log_file, user=params.nifi_user)
       #Execute('mv '+params.nifi_dir+'/*/* ' + params.nifi_dir, user=params.nifi_user)
           
 
